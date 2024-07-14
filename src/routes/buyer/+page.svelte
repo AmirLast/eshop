@@ -21,7 +21,7 @@
 <p class="text-lg mb-6">Times are tough. 🥾👟👞🥿👠👡👢</p>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-  {#each product as product}
+  {#each data.product as product}
     <div class="bg-white shadow-md rounded-lg overflow-hidden">
       {#each product.image as image}
       <img src={supabase.storage.from('').getPublicUrl(image).data.publicUrl} alt={product.name} class="w-full h-48 object-cover" />
