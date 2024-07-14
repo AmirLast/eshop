@@ -2,28 +2,38 @@
   import { goto } from '$app/navigation';
   import type { PageData } from './$types';
   import Header from './component/header.svelte';
-  import Modal from './component/Modal.svelte';
   import { onDestroy } from 'svelte';
 
   export let data: PageData;
   let product = data.product;
   let { supabase, session } = data;
 
-  let selectedProduct = null;
-
   $: ({ supabase, session } = data);
-
-  function openModal(product) {
-    selectedProduct = product;
-  }
-
-  function closeModal() {
-    selectedProduct = null;
-  }
 
   onDestroy(() => {
     console.log('Component destroyed');
   });
+
+  async function addToCart(productId: number) {
+    try {
+      const { error } = await supabase.from('cart').insert({
+        profile_id: session.user.id,
+        product_id: productId,
+        quantity: 1, // Assuming default quantity to add is 1
+      });
+
+      if (error) {
+        console.error('Error adding to cart:', error.message);
+        // Handle error if necessary
+      } else {
+        console.log('Product added to cart successfully');
+        // Optionally, notify user or update UI to reflect addition to cart
+      }
+    } catch (error) {
+      console.error('Unexpected error adding to cart:', error.message);
+      // Handle unexpected errors
+    }
+  }
 </script>
 
 <svelte:head>
@@ -38,7 +48,7 @@
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {#each product as prod}
-      <div class="bg-white shadow-md rounded-lg overflow-hidden" on:click={() => openModal(prod)} key={prod.id}>
+      <div class="bg-white shadow-md rounded-lg overflow-hidden" key={prod.id}>
         {#if prod.image}
           {#await supabase.storage.from('').getPublicUrl(prod.image).data.publicUrl then url}
             <img src={url} alt={prod.name} class="w-full h-56 object-cover" />
@@ -51,14 +61,11 @@
           <p class="text-gray-700 mb-4">Description: {prod.description}</p>
           <p class="text-gray-700 mb-4">Quantity: {prod.quantity}</p>
           <div class="text-xl font-semibold mb-4">Price: RM {prod.price.toFixed(2)}</div>
+          <button class="bg-purple-600 text-white py-2 px-4 rounded" on:click={() => addToCart(prod.id)}>Cart</button>
         </div>
       </div>
     {/each}
   </div>
-
-  {#if selectedProduct}
-    <Modal product={selectedProduct} closeModal={closeModal} />
-  {/if}
 </section>
 
 <style>
