@@ -8,9 +8,5 @@ export const load = (async ({ parent, url }) => {
 		.eq('id', session?.user.id)
 		.single();
 
-	const { data: product } = await supabase
-		.from('product')
-		.select(`*`)
-
-	return { profiles, product };
+	return { profiles };
 }) satisfies PageLoad;

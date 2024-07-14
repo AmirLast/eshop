@@ -1,51 +1,46 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import type { PageData } from './$types';
-    import ThreeItemGrid from './components/ThreeItemGrid.svelte';
-    import Carousel from './components/Carousel.svelte';
-    
-    export let data: PageData;
-    let profiles = data.profiles;
-    let { supabase, session } = data;
+  import { goto } from '$app/navigation';
+  import type { PageData } from './$types';
+  import Header from './component/header.svelte';
 
-    $: ({ supabase, session } = data);    
+  export let data: PageData;
+  let product = data.product;
+  let { supabase, session } = data;
 
-    $: clothesCollection = data.products[0]?.node?.products?.edges;
-    $: featuredCollection = data.products[1]?.node?.products?.edges;
-  </script>
-  
-  <svelte:head>
-    <title>Home – ESHOP</title>
-  </svelte:head>
-  
-  <main>
-    <section>
-      <div class="lg:h-[90vh]">
-        <ThreeItemGrid products={featuredCollection} />
+  $: ({ supabase, session } = data);
+</script>
+
+<svelte:head>
+<title>Home – ESHOP</title>
+</svelte:head>
+
+<Header {data} />
+
+<section class="text-center py-8">
+<h2 class="text-4xl font-bold mb-4">Get Shoes Limited!</h2>
+<p class="text-lg mb-6">Times are tough. 🐶</p>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  {#each product as product}
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+      {#each product.image as image}
+      <img src={supabase.storage.from('').getPublicUrl(image).data.publicUrl} alt={product.name} class="w-full h-48 object-cover" />
+      {/each}
+      <div class="p-4">
+        <h3 class="text-2xl font-bold mb-2">{product.name}</h3>
+        <p class="text-gray-700 mb-4">{product.description}</p>
+        <p class="text-gray-700 mb-4">{product.quantity}</p>
+        <div class="text-xl font-semibold mb-4">${product.price.toFixed(2)}</div>
+        <button class="bg-purple-600 text-white py-2 px-4 rounded">Buy Now</button>
       </div>
-    </section>
-    <section>
-      <Carousel items={clothesCollection} />
-    </section>
-    <section>
-      <div
-        class="flex flex-col px-8 py-20 text-white border border-black bg-dark lg:flex-row lg:items-center"
-      >
-        <div
-          class="flex-none mb-4 mr-8 text-3xl font-black text-left md:text-4xl lg:mb-0 lg:w-1/3 lg:text-right lg:text-6xl"
-        >
-          Dessert dragée halvah croissant.
-        </div>
-        <div>
-          <div class="lg:text-2xl">
-            Cupcake ipsum dolor sit amet lemon drops pastry cotton candy. Sweet carrot cake macaroon
-            bonbon croissant fruitcake jujubes macaroon oat cake. Soufflé bonbon caramels jelly beans.
-            Tiramisu sweet roll cheesecake pie carrot cake.
-          </div>
-          <button class="mt-4 font-bold text-svelteOrange hover:text-svelteDark lg:text-2xl">
-            Read it here
-          </button>
-        </div>
-      </div>
-    </section>
-  </main>
+    </div>
+  {/each}
+</div>
+</section>
+
+<style>
+section {
+  max-width: 1200px;
+  margin: auto;
+}
+</style>

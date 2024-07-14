@@ -9,7 +9,6 @@
 	let password = '';
 	let confirmPassword = '';
 	let username = '';
-	let matrikID = '';
 	let full_name = '';
 	let errorMessage = '';
 	let loading = false;
