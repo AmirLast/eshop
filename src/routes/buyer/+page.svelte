@@ -2,31 +2,32 @@
   import { goto } from '$app/navigation';
   import type { PageData } from './$types';
   import Header from './component/header.svelte';
+  import Modal from './component/Modal.svelte';
   import { onDestroy } from 'svelte';
 
   export let data: PageData;
   let product = data.product;
   let { supabase, session } = data;
 
+  let selectedProduct = null;
+
   $: ({ supabase, session } = data);
 
-  onDestroy(() => {
-  console.log('Component destroyed');
-  });
-
-  // Function to get the public URL
-  function getImageUrl(imagePath) {
-    const { data, error } = supabase.storage.from('product').getPublicUrl(imagePath);
-    if (error) {
-      console.error('Error fetching image URL:', error);
-      return '';
-    }
-    return data.publicUrl;
+  function openModal(product) {
+    selectedProduct = product;
   }
+
+  function closeModal() {
+    selectedProduct = null;
+  }
+
+  onDestroy(() => {
+    console.log('Component destroyed');
+  });
 </script>
 
 <svelte:head>
-<title>Home – ESHOP</title>
+  <title>Home – ESHOP</title>
 </svelte:head>
 
 <Header {data} />
@@ -36,30 +37,33 @@
   <p class="text-lg mb-6">Times are tough. 🥾👟👞🥿👠👡👢</p>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    {#each product as product}
-      <div class="bg-white shadow-md rounded-lg overflow-hidden">
-        {#if product.image}
-          {#await supabase.storage.from('').getPublicUrl(product.image).data.publicUrl then url}
-            <img width="200" src={url} alt={product.name} class="w-full h-48 object-cover" />
+    {#each product as prod}
+      <div class="bg-white shadow-md rounded-lg overflow-hidden" on:click={() => openModal(prod)} key={prod.id}>
+        {#if prod.image}
+          {#await supabase.storage.from('').getPublicUrl(prod.image).data.publicUrl then url}
+            <img src={url} alt={prod.name} class="w-full h-56 object-cover" />
           {:catch error}
             <p class="text-red-500">Error loading image</p>
           {/await}
         {/if}
         <div class="p-4">
-          <h3 class="text-2xl font-bold mb-2">{product.name}</h3>
-          <p class="text-gray-700 mb-4">{product.description}</p>
-          <p class="text-gray-700 mb-4">{product.quantity}</p>
-          <div class="text-xl font-semibold mb-4">RM {product.price.toFixed(2)}</div>
-          <button class="bg-purple-600 text-white py-2 px-4 rounded">Buy Now</button>
+          <h3 class="text-2xl font-bold mb-2">Name Product: {prod.name}</h3>
+          <p class="text-gray-700 mb-4">Description: {prod.description}</p>
+          <p class="text-gray-700 mb-4">Quantity: {prod.quantity}</p>
+          <div class="text-xl font-semibold mb-4">Price: RM {prod.price.toFixed(2)}</div>
         </div>
       </div>
     {/each}
   </div>
+
+  {#if selectedProduct}
+    <Modal product={selectedProduct} closeModal={closeModal} />
+  {/if}
 </section>
 
 <style>
-section {
-  max-width: 1200px;
-  margin: auto;
-}
+  section {
+    max-width: 1200px;
+    margin: auto;
+  }
 </style>
