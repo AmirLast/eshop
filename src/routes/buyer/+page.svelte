@@ -40,7 +40,7 @@
       <div class="bg-white shadow-md rounded-lg overflow-hidden">
         {#if product.image}
           {#await supabase.storage.from('').getPublicUrl(product.image).data.publicUrl then url}
-            <img src={url} alt={product.name} class="w-full h-48 object-cover" />
+            <img width="200" src={url} alt={product.name} class="w-full h-48 object-cover" />
           {:catch error}
             <p class="text-red-500">Error loading image</p>
           {/await}
