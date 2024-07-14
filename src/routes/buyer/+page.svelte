@@ -18,7 +18,7 @@
 
 <section class="text-center py-8">
 <h2 class="text-4xl font-bold mb-4">Get Shoes Limited!</h2>
-<p class="text-lg mb-6">Times are tough. 🐶</p>
+<p class="text-lg mb-6">Times are tough. 🥾👟👞🥿👠👡👢</p>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
   {#each product as product}
