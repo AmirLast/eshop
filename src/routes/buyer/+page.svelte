@@ -2,12 +2,27 @@
   import { goto } from '$app/navigation';
   import type { PageData } from './$types';
   import Header from './component/header.svelte';
+  import { onDestroy } from 'svelte';
 
   export let data: PageData;
   let product = data.product;
   let { supabase, session } = data;
 
   $: ({ supabase, session } = data);
+
+  onDestroy(() => {
+  console.log('Component destroyed');
+  });
+
+  // Function to get the public URL
+  function getImageUrl(imagePath) {
+    const { data, error } = supabase.storage.from('product').getPublicUrl(imagePath);
+    if (error) {
+      console.error('Error fetching image URL:', error);
+      return '';
+    }
+    return data.publicUrl;
+  }
 </script>
 
 <svelte:head>
@@ -17,23 +32,29 @@
 <Header {data} />
 
 <section class="text-center py-8">
-<h2 class="text-4xl font-bold mb-4">Get Shoes Limited!</h2>
-<p class="text-lg mb-6">Times are tough. 🥾👟👞🥿👠👡👢</p>
+  <h2 class="text-4xl font-bold mb-4">Get Shoes Limited!</h2>
+  <p class="text-lg mb-6">Times are tough. 🥾👟👞🥿👠👡👢</p>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-  {#each product as product}
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
-      <img src={supabase.storage.from('product').getPublicUrl(product.image).data.publicUrl} alt={product.name} class="w-full h-48 object-cover" />
-      <div class="p-4">
-        <h3 class="text-2xl font-bold mb-2">{product.name}</h3>
-        <p class="text-gray-700 mb-4">{product.description}</p>
-        <p class="text-gray-700 mb-4">{product.quantity}</p>
-        <div class="text-xl font-semibold mb-4">${product.price.toFixed(2)}</div>
-        <button class="bg-purple-600 text-white py-2 px-4 rounded">Buy Now</button>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {#each product as product}
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        {#if product.image}
+          {#await supabase.storage.from('').getPublicUrl(product.image).data.publicUrl then url}
+            <img src={url} alt={product.name} class="w-full h-48 object-cover" />
+          {:catch error}
+            <p class="text-red-500">Error loading image</p>
+          {/await}
+        {/if}
+        <div class="p-4">
+          <h3 class="text-2xl font-bold mb-2">{product.name}</h3>
+          <p class="text-gray-700 mb-4">{product.description}</p>
+          <p class="text-gray-700 mb-4">{product.quantity}</p>
+          <div class="text-xl font-semibold mb-4">RM {product.price.toFixed(2)}</div>
+          <button class="bg-purple-600 text-white py-2 px-4 rounded">Buy Now</button>
+        </div>
       </div>
-    </div>
-  {/each}
-</div>
+    {/each}
+  </div>
 </section>
 
 <style>
