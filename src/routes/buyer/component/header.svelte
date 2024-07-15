@@ -3,6 +3,7 @@
     import type { PageData } from './$types';
     import { onMount, onDestroy } from 'svelte';
     import { page } from '$app/stores';
+    import Logo from '$lib/img/logo.png';
 
     export let data: PageData;
 
@@ -56,9 +57,12 @@
 
 <div class="flex flex-col relative z-20">
     <div class="max-w-[1400px] mx-auto w-full flex items-center justify-between p-4 py-6">
-        <a href="/buyer">
-            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">ESHOP</h2>
-        </a>
+        <div class="flex items-center space-x-4">
+            <a href="/buyer" class="flex items-center space-x-2">
+                <img src={Logo} class="h-10 w-auto" alt="Your Company">
+                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">ESHOP</h2>
+            </a>
+        </div>
         <nav class="hidden md:flex items-center gap-4 lg:gap-6">
             <div class="mt-5 flex lg:ml-4 lg:mt-0">
                 <span class="hidden sm:block relative">

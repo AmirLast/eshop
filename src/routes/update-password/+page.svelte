@@ -26,7 +26,7 @@
 		} else {
 			successMessage = 'Password has been successfully updated!';
 			setTimeout(() => {
-				goto('/login');
+				goto('/');
 			}, 3000); // Redirect to login page after 3 seconds
 		}
 
