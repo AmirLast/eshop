@@ -40,6 +40,52 @@
   function calculateSubtotal() {
     return cart.reduce((total, item) => total + (item.product.price * item.quantity), 0).toFixed(2);
   }
+
+  async function checkout() {
+    try {
+      let totalQuantity = 0;
+      let totalAmount = 0;
+      let productDetails = cart.map(item => {
+        totalQuantity += item.quantity;
+        totalAmount += item.quantity * item.product.price;
+        return `${item.product.name} (${item.quantity} x RM ${item.product.price.toFixed(2)})`;
+      }).join(', ');
+
+      const { error: payError } = await supabase.from('pay').insert({
+        profile_id: session.user.id,
+        product_details: productDetails,
+        total_quantity: totalQuantity,
+        total_amount: totalAmount,
+        payment_method: 'cash', // Example payment method
+        no_receipt: `REC-${Date.now()}-${Math.random().toString(36).substring(7)}`, // Generate a unique receipt number
+      });
+
+      if (payError) {
+        console.error('Error inserting payment details:', payError.message);
+        return;
+      }
+
+      // Delete all items from the cart for the user
+      const { error: deleteError } = await supabase
+        .from('cart')
+        .delete()
+        .eq('profile_id', session.user.id);
+
+      if (deleteError) {
+        console.error('Error clearing cart:', deleteError.message);
+        return;
+      }
+
+      // Update cart to empty after successful checkout
+      cart = [];
+      console.log('Checkout successful and cart cleared');
+      // Optionally, redirect to a confirmation page
+      // goto('/confirmation');
+    } catch (error) {
+      console.error('Unexpected error during checkout:', error.message);
+      // Handle unexpected errors
+    }
+  }
 </script>
 
 <svelte:head>
@@ -68,13 +114,13 @@
             <td class="py-4">
               <div class="flex items-center">
                 {#if item.product.image}
-                  {#await supabase.storage.from('').getPublicUrl(item.product.image).data.publicUrl then url} 
+                  {#await supabase.storage.from('').getPublicUrl(item.product.image).data.publicUrl then url}
                     <img src={url} alt={item.product.name} class="w-16 h-16 object-cover mr-4" />
                   {:catch error}
                     <p class="text-red-500">Error loading image</p>
                   {/await}
                 {/if}
-                <span>{item.product.name}, {item.product.size}</span>
+                <span>{item.product.name}</span>
               </div>
             </td>
             <td class="py-4">
@@ -94,7 +140,7 @@
 
     <div class="text-right">
       <p class="text-xl font-bold mb-4">Subtotal: RM {calculateSubtotal()}</p>
-      <button class="bg-purple-600 text-white py-2 px-6 rounded">Check Out</button>
+      <button class="bg-purple-600 text-white py-2 px-6 rounded" on:click={checkout}>Check Out</button>
     </div>
   {:else}
     <p class="text-xl text-gray-600">Your cart is empty.</p>
