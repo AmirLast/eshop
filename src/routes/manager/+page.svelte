@@ -13,6 +13,7 @@
   let productPrice = 0;
   let productQuantity = 0;
   let productImage: FileList | null = null;
+  let productSizes = '';
 
   onDestroy(() => {
     // Cleanup code if needed
@@ -39,6 +40,8 @@
         return data.map((item) => item.fullPath);
     }
 
+    const sizesArray = productSizes.split(',').map(size => size.trim());
+
       const { data, error } = await supabase
         .from('product')
         .insert([
@@ -48,6 +51,7 @@
             price: productPrice,
             quantity: productQuantity,
             image: extractFullPath(imageUrls),
+            size: sizesArray
           },
         ]);
 
@@ -63,8 +67,9 @@
       productPrice = 0;
       productQuantity = 0;
       productImage = null;
+      productSizes = '';
       // Optionally redirect to another page
-      // goto('/products');
+      goto('/manager');
     }
   };
 </script>
@@ -95,9 +100,42 @@
       <input type="number" bind:value={productQuantity} required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
     </div>
     <div>
+      <label class="block text-sm font-medium text-gray-700">Product Sizes (comma-separated)</label>
+      <input type="text" bind:value={productSizes} required placeholder="e.g., S, M, L, XL" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+    </div>
+    <div>
       <label class="block text-sm font-medium text-gray-700">Product Image</label>
       <input type="file" multiple accept="image/*" on:change={(e) => productImage = e.target.files} required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
     </div>
     <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Upload Product</button>
   </form>
 </main>
+
+<style>
+  main {
+    max-width: 768px;
+    margin: auto;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+
+  input, textarea, select, button {
+    margin-bottom: 1rem;
+  }
+
+  button {
+    align-self: flex-start;
+  }
+</style>

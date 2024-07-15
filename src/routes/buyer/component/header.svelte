@@ -4,6 +4,9 @@
     import { onMount, onDestroy } from 'svelte';
 
     export let data: PageData;
+
+    let cart = data.cart || [];
+
     let { supabase, session } = data;
     $: ({ supabase, session } = data);
 
@@ -14,7 +17,7 @@
         goto('/', { replaceState: true });
     };
 
-    const handlecart = async () => {
+    const handleCart = async () => {
         goto('/buyer/cart');
     };
 
@@ -47,12 +50,15 @@
         </a>
         <nav class="hidden md:flex items-center gap-4 lg:gap-6">
             <div class="mt-5 flex lg:ml-4 lg:mt-0">
-                <span class="hidden sm:block">
-                    <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" on:click={handlecart}>
+                <span class="hidden sm:block relative">
+                    <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" on:click={handleCart}>
                         <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <path d="M7 4h10l1.25 6H8.22l-1-4.8L6.3 5.7 4.23 6.6 4 6H2V4h3L6.28 3h12.44l.97 4.61-.91.91-1.97 1.97-1 1H8.55L7 12.7V4zm0 2v6.55l1.78-.89 2.95-1.48H18L16.8 6H7zm1.55 11a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm9.9 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/>
                         </svg>
                         Cart
+                        {#if data.cart?.length > 0}
+                            <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-yellow-500 rounded-full">{data.cart?.length}</span>
+                        {/if}
                     </button>
                 </span>
         
@@ -84,3 +90,17 @@
         </div>
     </div>
 </div>
+
+<style>
+    .relative {
+        position: relative;
+    }
+
+    .absolute {
+        position: absolute;
+    }
+
+    .bg-yellow-500 {
+        background-color: #fbbf24;
+    }
+</style>

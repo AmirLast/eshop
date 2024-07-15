@@ -8,17 +8,20 @@
   let product = data.product;
   let { supabase, session } = data;
 
+  let selectedSizes = {};
+
   $: ({ supabase, session } = data);
 
   onDestroy(() => {
     console.log('Component destroyed');
   });
 
-  async function addToCart(productId: number) {
+  async function addToCart(productId: number, size: string) {
     try {
       const { error } = await supabase.from('cart').insert({
         profile_id: session.user.id,
         product_id: productId,
+        size: size,
         quantity: 1, // Assuming default quantity to add is 1
       });
 
@@ -61,7 +64,17 @@
           <p class="text-gray-700 mb-4">Description: {prod.description}</p>
           <p class="text-gray-700 mb-4">Quantity: {prod.quantity}</p>
           <div class="text-xl font-semibold mb-4">Price: RM {prod.price.toFixed(2)}</div>
-          <button class="bg-purple-600 text-white py-2 px-4 rounded" on:click={() => addToCart(prod.id)}>Cart</button>
+          {#if prod.size && prod.size.length > 0}
+            <div class="mb-4">
+              <label for="size" class="block text-sm font-medium text-gray-700">Size:</label>
+              <select id="size" bind:value={selectedSizes[prod.id]} class="mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                {#each prod.size as size}
+                  <option value={size}>{size}</option>
+                {/each}
+              </select>
+            </div>
+          {/if}
+          <button class="bg-purple-600 text-white py-2 px-4 rounded" on:click={() => addToCart(prod.id, selectedSizes[prod.id] || '')}>Add to Cart</button>
         </div>
       </div>
     {/each}
@@ -72,5 +85,17 @@
   section {
     max-width: 1200px;
     margin: auto;
+  }
+
+  select {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+  }
+
+  button {
+    margin-top: 1rem;
   }
 </style>

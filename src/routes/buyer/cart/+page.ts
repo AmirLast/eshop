@@ -2,25 +2,36 @@
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ parent, url }) => {
-  const { supabase, session } = await parent();
+  try {
+    const { supabase, session } = await parent();
 
-  // Fetch user profile
-  const { data: profiles } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', session?.user.id)
-    .single();
+    // Fetch user profile
+    const { data: profiles, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session?.user.id)
+      .single();
+    
+    if (profileError) throw new Error(`Profile fetch error: ${profileError.message}`);
 
-  // Fetch products
-  const { data: product } = await supabase
-    .from('product')
-    .select('*');
+    // Fetch products
+    const { data: product, error: productError } = await supabase
+      .from('product')
+      .select('*');
 
-  // Fetch items in the cart
-  const { data: cart } = await supabase
-    .from('cart')
-    .select('*')
-    .eq('profile_id', session?.user.id);
+    if (productError) throw new Error(`Product fetch error: ${productError.message}`);
 
-  return { profiles, product, cart };
+    // Fetch items in the cart
+    const { data: cart, error: cartError } = await supabase
+      .from('cart')
+      .select(`*, product:product_id(*)`)
+      .eq('profile_id', session?.user.id);
+
+    if (cartError) throw new Error(`Cart fetch error: ${cartError.message}`);
+
+    return { profiles, product, cart };
+  } catch (error) {
+    console.error('Load function error:', error);
+    throw error;
+  }
 };
