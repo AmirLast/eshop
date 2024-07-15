@@ -17,7 +17,7 @@
         }
     }
 
-    // Check if the path starts with "/admin"
+    // Check if the path starts with "/buyer"
     $: pathStartsWithStudent = get(page).url.pathname.startsWith('/buyer');
 </script>
 

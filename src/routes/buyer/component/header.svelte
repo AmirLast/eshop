@@ -18,16 +18,14 @@
 	};
 
     const handleSignOut = async () => {
-        await supabase.auth.signOut();
-        goto('/', { replaceState: true });
-    };
-
-    const handleCart = async () => {
-        goto('/buyer/cart');
-    };
-
-    const handlePurchases = async () => {
-        goto('/buyer/purchases');
+        console.log("Attempting to sign out...");
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error("Error signing out:", error);
+        } else {
+            console.log("Successfully signed out.");
+            window.location.href = '/';  // Menggunakan window.location.href untuk memastikan navigasi
+        }
     };
 
     // Function to toggle dropdown visibility

@@ -1,8 +1,8 @@
 import type { PageLoad } from './$types';
 
-export const load = (async ({ parent, depends }) => {
+export const load = (async ({ parent }) => {
+    
     const { supabase, session } = await parent();
-    depends('manager:/manager');
     
     const { data: profiles, error: profilesError } = await supabase
         .from('profiles')

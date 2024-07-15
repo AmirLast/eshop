@@ -2,6 +2,7 @@
     import { goto } from '$app/navigation';
     import type { PageData } from './$types';
     import Header from '../component/header.svelte';
+    import { onDestroy } from 'svelte';
   
     export let data: PageData;
     let profiles = data.profiles;
@@ -10,7 +11,11 @@
     let { supabase, session } = data;
   
     $: ({ supabase, session } = data);
-  </script>
+
+    onDestroy(() => {
+        console.log('Component destroyed');
+    });
+</script>
   
   <svelte:head>
     <title>Purchases - ESHOP</title>

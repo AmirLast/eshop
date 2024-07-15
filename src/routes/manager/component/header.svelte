@@ -2,7 +2,7 @@
     import { goto } from '$app/navigation';
     import type { PageData } from './$types';
     import { onMount, onDestroy } from 'svelte';
-    
+
     export let data: PageData;
 
     let { supabase, session } = data;
@@ -11,9 +11,16 @@
     let isDropdownOpen = false;
 
     const handleSignOut = async () => {
-        await supabase.auth.signOut();
-        goto('/', { replaceState: true });
+        console.log("Attempting to sign out...");
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error("Error signing out:", error);
+        } else {
+            console.log("Successfully signed out.");
+            window.location.href = '/';  // Menggunakan window.location.href untuk memastikan navigasi
+        }
     };
+
     // Function to toggle dropdown visibility
     const toggleDropdown = () => {
         isDropdownOpen = !isDropdownOpen;
@@ -22,13 +29,14 @@
     // Close dropdown when clicking outside of it
     onMount(() => {
         const closeDropdownOnClickOutside = (event: MouseEvent) => {
-            if (!document.getElementById('mobile-menu-button').contains(event.target as Node)) {
+            const menuButton = document.getElementById('mobile-menu-button');
+            if (menuButton && !menuButton.contains(event.target as Node)) {
                 isDropdownOpen = false;
             }
         };
-        
+
         document.addEventListener('click', closeDropdownOnClickOutside);
-        
+
         // Cleanup event listener on component destroy
         onDestroy(() => {
             document.removeEventListener('click', closeDropdownOnClickOutside);
@@ -38,7 +46,7 @@
 
 <div class="flex flex-col relative z-20">
     <div class="max-w-[1400px] mx-auto w-full flex items-center justify-between p-4 py-6">
-        <a href="/buyer">
+        <a href="/manager">
             <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">ESHOP</h2>
         </a>
         <nav class="hidden md:flex items-center gap-4 lg:gap-6">

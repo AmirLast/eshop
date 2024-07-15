@@ -7,7 +7,7 @@ export const load = (async ({ parent }) => {
 
     if (!session) {
         // Redirect to login if no session
-        throw redirect(303, '/login');
+        throw redirect(303, '/');
     }
 
     const { data: profiles, error } = await supabase
@@ -18,7 +18,7 @@ export const load = (async ({ parent }) => {
 
     if (error) {
         console.error('Error fetching user profile:', error);
-        throw redirect(303, '/login');
+        throw redirect(303, '/');
     }
 
     if (profiles.role === 'buyer') {
