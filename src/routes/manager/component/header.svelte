@@ -2,8 +2,9 @@
     import { goto } from '$app/navigation';
     import type { PageData } from './$types';
     import { onMount, onDestroy } from 'svelte';
-
+    
     export let data: PageData;
+
     let { supabase, session } = data;
     $: ({ supabase, session } = data);
 
@@ -13,7 +14,6 @@
         await supabase.auth.signOut();
         goto('/', { replaceState: true });
     };
-
     // Function to toggle dropdown visibility
     const toggleDropdown = () => {
         isDropdownOpen = !isDropdownOpen;
@@ -63,10 +63,23 @@
             <!-- Dropdown menu -->
             {#if isDropdownOpen}
                 <div class="absolute right-0 z-10 -mr-1 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="mobile-menu-button" tabindex="-1">
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <a on:click={handleSignOut} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="mobile-menu-item-0">Logout</a>
+                    <a on:click={handleSignOut} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="mobile-menu-item-1">Logout</a>
                 </div>
             {/if}
         </div>
     </div>
 </div>
+
+<style>
+    .relative {
+        position: relative;
+    }
+
+    .absolute {
+        position: absolute;
+    }
+
+    .bg-yellow-500 {
+        background-color: #fbbf24;
+    }
+</style>

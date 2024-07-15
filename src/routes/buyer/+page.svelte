@@ -27,14 +27,24 @@
 
       if (error) {
         console.error('Error adding to cart:', error.message);
-        // Handle error if necessary
       } else {
         console.log('Product added to cart successfully');
         // Optionally, notify user or update UI to reflect addition to cart
+        // Refresh data after adding to cart
+        const { data: cart, error: cartError } = await supabase
+          .from('cart')
+          .select(`*, product:product_id(*)`)
+          .eq('profile_id', session?.user.id);
+
+        if (cartError) {
+          console.error(cartError);
+        } else {
+          // Update cart data in the component state
+          data.cart = cart;
+        }
       }
     } catch (error) {
       console.error('Unexpected error adding to cart:', error.message);
-      // Handle unexpected errors
     }
   }
 </script>
