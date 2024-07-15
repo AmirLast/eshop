@@ -35,6 +35,14 @@
     }
     loading = false;
   };
+
+  const handleGoogleSignIn = () => {
+        alert("Coming Soon");
+  };
+
+  const handleGitHubSignIn = () => {
+        alert("Coming Soon");
+  };
 </script>
 
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
@@ -82,7 +90,7 @@
     
     <div class="mt-6 grid grid-cols-2 gap-3">
       <div>
-        <a href="/" class="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
+        <a href="#" on:click|preventDefault={handleGoogleSignIn} class="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
           <span class="sr-only">Sign in with Google</span>
           <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <!-- Google icon SVG -->
@@ -93,7 +101,7 @@
       </div>
 
       <div>
-        <a href="/" class="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
+        <a href="#" on:click|preventDefault={handleGitHubSignIn}  class="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
           <span class="sr-only">Sign in with GitHub</span>
           <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <!-- GitHub icon SVG -->
