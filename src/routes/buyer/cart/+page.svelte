@@ -8,6 +8,7 @@
   let profiles = data.profiles;
   let product = data.product;
   let cart = data.cart;
+	let showPayConfirm = false;
 
   let { supabase, session } = data;
 
@@ -41,8 +42,15 @@
     return cart.reduce((total, item) => total + (item.product.price * item.quantity), 0).toFixed(2);
   }
 
+  function handlePay() {
+		showPayConfirm = true;
+	};
+
   async function checkout() {
     try {
+
+      showPayConfirm = false;
+
       let totalQuantity = 0;
       let totalAmount = 0;
       let productDetails = cart.map(item => {
@@ -81,6 +89,8 @@
       console.log('Checkout successful and cart cleared');
       // Optionally, redirect to a confirmation page
       // goto('/confirmation');
+      alert('purchase successful');
+      window.location.href = '/buyer/purchases';
     } catch (error) {
       console.error('Unexpected error during checkout:', error.message);
       // Handle unexpected errors
@@ -140,7 +150,7 @@
 
     <div class="text-right">
       <p class="text-xl font-bold mb-4">Subtotal: RM {calculateSubtotal()}</p>
-      <button class="bg-purple-600 text-white py-2 px-6 rounded" on:click={checkout}>Check Out</button>
+      <button class="bg-purple-600 text-white py-2 px-6 rounded" on:click={handlePay}>Check Out</button>
     </div>
   {:else}
     <p class="text-xl text-gray-600">Your cart is empty.</p>
@@ -150,6 +160,16 @@
     <button class="bg-purple-600 text-white py-2 px-4 rounded" on:click={() => goto('/buyer')}>Back To All Products</button>
   </div>
 </section>
+
+{#if showPayConfirm}
+  <div class="modal fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
+    <div class="bg-white p-6 rounded shadow-md text-center">
+      <p>Are sure to make payment?</p>
+      <button on:click={checkout} class="bg-violet-500 hover:bg-violet-700 p-2 m-2 px-4 py-2 mt-4 rounded">Confirm</button>
+      <button on:click={() => (showPayConfirm = false)} class="bg-red-500 hover:bg-red-700 p-2 m-2 px-4 py-2 mt-4 rounded">Cancel</button>
+    </div>
+  </div>
+{/if}
 
 <style>
   section {
@@ -182,4 +202,17 @@
   .bg-red-600:hover {
     background-color: #cc1f1a;
   }
+
+  .modal {
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
 </style>

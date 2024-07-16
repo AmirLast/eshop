@@ -41,6 +41,7 @@
         } else {
           // Update cart data in the component state
           data.cart = cart;
+          window.location.href = '/buyer';
         }
       }
     } catch (error) {
