@@ -36,3 +36,24 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+## Users
+
+Manager:
+email: manager@manager.com
+password: 123
+
+Buyer:
+email: 54amirsyafiq@gmail.com
+password: 1pknM2qF%v
+
+**Buyer can be registered by user
+
+## How to run the website
+
+Online web browser or localhost
+
+1) using the link https://eshop-ten-topaz.vercel.app
+
+2) setup localhost using apache and run command npm run dev
+
